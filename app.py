@@ -23,8 +23,14 @@ app = Flask(__name__)
 @app.route("/")
 def landing_page():
     posts = get_all_posts()
-    
+
     return render_template('blog.html', posts=json.loads(posts))
+
+@app.route("/modify-page")
+def modify_page():
+    posts = get_all_posts()
+
+    return render_template('edit_blog.html', posts=json.loads(posts))
 
 
 @app.route('/add_post', methods=['POST'])
@@ -47,7 +53,7 @@ def remove_all():
 
 @app.route("/posts", methods=['GET'])
 def get_all_posts():
-    
+
     _posts = db.blogpostDB.find()
     posts = [post for post in _posts]
     return JSONEncoder().encode(posts)
@@ -60,6 +66,7 @@ def new():
         'title': request.form['title'],
         'post': request.form['post']
     }
+
     db.blogpostDB.insert_one(item_doc)
 
     _posts = db.blogpostDB.find()
@@ -70,7 +77,20 @@ def new():
 
 ### Insert function here ###
 
+@app.route('/delete', methods=['POST'])
+def delete_post():
+    db.blogpostDB.delete_one({"_id": ObjectId(request.form['delete_id'])});
 
+    return redirect(url_for('landing_page'))
+
+@app.route('/update', methods=['POST'])
+def update_post():
+
+    db.blogpostDB.update_one(
+      { "_id" : ObjectId(request.form['update_id'])},
+      {"$set":{'title': request.form['title'], 'post': request.form['post']}})
+
+    return redirect(url_for('landing_page'))
 
 ############################
 

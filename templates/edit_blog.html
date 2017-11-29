@@ -1,0 +1,31 @@
+<html>
+<head>
+	<title>
+		My First Blog
+	</title>
+	{% block headCss %}
+		<link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/base.css')}}" type="text/css">
+	{% endblock %}
+</head>
+	<body class="body">
+		<h2>Modify blog</h2>
+		<a href="{{url_for('landing_page')}}">Go back to blogs</a>
+
+		{% for post in posts %}
+		<form class="form-posts-update" action="/update" method="POST">
+			<div class="blog-border">
+				<div class="title">
+					<input id="input-title" type="text" name="title" placeholder="Title" value= {{ post.title }}></input>
+				</div>
+				<div class="post">
+					<textarea id="input-post" name="post"> {{ post.post }} </textarea>
+				</div>
+				<input id="input_id" name="update_id" type="text" value={{post._id}} style="display:none"></input>
+				<input type="submit" id="input-submit" value="UPDATE"></input>
+	  	</div>
+		</form>
+		{% endfor %}
+
+	</body>
+
+</html>
